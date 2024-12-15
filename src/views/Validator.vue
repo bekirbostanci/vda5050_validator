@@ -191,7 +191,8 @@ function checkValidation() {
     <TopBar></TopBar>
     <ResizablePanelGroup
       direction="horizontal"
-      class="border w-full h-[calc(100svh-36px)]"
+      class="border w-full"
+      style="height: calc(100svh - 36px);"
     >
       <ResizablePanel :default-size="50">
         <Textarea
