@@ -27,6 +27,7 @@ defineEmits<{
         <SelectItem value="connection"> Connection </SelectItem>
         <SelectItem value="instantActions"> Instant Actions </SelectItem>
         <SelectItem value="factsheet"> Factsheet </SelectItem>
+        <SelectItem value="visualization"> Visualization </SelectItem>
       </SelectGroup>
     </SelectContent>
   </Select>
