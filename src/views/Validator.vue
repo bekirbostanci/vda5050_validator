@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
+import {Ref, ref} from 'vue';
 
 // UI Components
 import {
@@ -7,37 +7,23 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from '@/components/ui/toast';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+
+import {toast} from '@/components/ui/toast';
+import {Textarea} from '@/components/ui/textarea';
+import {Button} from '@/components/ui/button';
 import TopBar from '@/components/TopBar.vue';
+import ErrorCard from '@/components/ErrorCard.vue';
+import ErrorTable from '@/components/ErrorTable.vue';
+import VdaTopicSelect from '@/components/VdaTopicSelect.vue';
 import vdaSchemas from '../vda-schemas/index';
 
 // 3rd Party
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import addFormats from 'ajv-formats'; // Import ajv-formats for format validation
-import Ajv2020, { ErrorObject } from 'ajv/dist/2020';
-import { Icon } from '@iconify/vue';
+import Ajv2020, {ErrorObject} from 'ajv/dist/2020';
+import {Icon} from '@iconify/vue';
 import Separator from '@/components/ui/separator/Separator.vue';
-
 
 enum vdaTopicsEnum {
   AUTO = 'auto',
@@ -53,9 +39,13 @@ enum vdaVersionsEnum {
   V2_0_0 = 'v2_0_0',
   V2_1_0 = 'v2_1_0',
 }
-type vdaVersions = vdaVersionsEnum.V1_1_0 | vdaVersionsEnum.V2_0_0 | vdaVersionsEnum.V2_1_0;
+type vdaVersions =
+  | vdaVersionsEnum.V1_1_0
+  | vdaVersionsEnum.V2_0_0
+  | vdaVersionsEnum.V2_1_0;
 
-type vdaTopics = vdaTopicsEnum.AUTO
+type vdaTopics =
+  | vdaTopicsEnum.AUTO
   | 'auto'
   | 'visualization'
   | 'state'
@@ -64,7 +54,6 @@ type vdaTopics = vdaTopicsEnum.AUTO
   | 'connection'
   | 'factsheet';
 
-
 const inputData = ref('');
 const parsedData = ref(null);
 const detectedVersion = ref('');
@@ -72,8 +61,6 @@ const detectedTopic = ref('');
 const validateErrors: Ref<ErrorObject[]> = ref<ErrorObject[]>([]);
 const selectedErrorIndex = ref(0);
 const selectedTopic: Ref<vdaTopics> = ref(vdaTopicsEnum.AUTO);
-
-
 
 function detectVersion(parsedJson: any): vdaVersions | undefined {
   if (!parsedJson.version) {
@@ -168,17 +155,12 @@ function checkValidation() {
     allErrors: true,
   });
   addFormats(ajv);
-  console.log("1");
-  console.log(schema);
-  
+
   const validate = ajv.compile(schema);
-  console.log(validate.errors);
-  console.log("2");
-  
+
   try {
     const isValid = validate(parsed);
-    console.log("3");
-    
+
     if (validate.errors) {
       validateErrors.value = validate.errors;
     } else {
@@ -196,12 +178,11 @@ function checkValidation() {
         variant: 'destructive',
       });
     }
-  }
-  catch (error) {
+  } catch (error) {
     toast({
-        title: 'Validation failed',
-        description: 'The JSON data is not valid.' + error,
-      });
+      title: 'Validation failed',
+      description: 'The JSON data is not valid.' + error,
+    });
   }
 }
 </script>
@@ -209,33 +190,27 @@ function checkValidation() {
 <template>
   <div class="h-full w-full">
     <TopBar></TopBar>
-    <ResizablePanelGroup direction="horizontal" class="border w-full" style="height: calc(100svh - 36px)">
+    <ResizablePanelGroup
+      direction="horizontal"
+      class="border w-full h-[calc(100svh-36px)]"
+    >
       <ResizablePanel :default-size="50">
-        <Textarea class="w-full h-[calc(100svh-90px)] resize-none" v-model="inputData"
-          placeholder="Type your VDA5050 JSON here..." />
+        <Textarea
+          class="w-full h-[calc(100svh-90px)] resize-none"
+          v-model="inputData"
+          placeholder="Type your VDA5050 JSON here..."
+        />
         <div class="flex justify-between items-center px-4 py-2">
           <div class="flex items-center">
-            <a v-if="detectedTopic && detectedVersion" class="text-sm text-muted-foreground">
+            <a
+              v-if="detectedTopic && detectedVersion"
+              class="text-sm text-muted-foreground"
+            >
               {{ detectedTopic }} - {{ detectedVersion }}
             </a>
           </div>
           <div class="flex gap-2">
-            <Select v-model="selectedTopic">
-              <SelectTrigger class="w-[180px]">
-                <SelectValue placeholder="Select vda topic" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>VDA5050 Topic</SelectLabel>
-                  <SelectItem value="auto"> Auto </SelectItem>
-                  <SelectItem value="state"> State </SelectItem>
-                  <SelectItem value="order"> Order </SelectItem>
-                  <SelectItem value="connection"> Connection </SelectItem>
-                  <SelectItem value="instantActions"> Instant Actions </SelectItem>
-                  <SelectItem value="factsheet"> Factsheet </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <VdaTopicSelect @selectedTopic="selectedTopic = $event" />
             <Button @click="inputData = ''" variant="outline">
               <Icon icon="mdi:delete" class="mr-2" />Clear
             </Button>
@@ -256,62 +231,12 @@ function checkValidation() {
       </ResizablePanel>
       <ResizablePanel :default-size="50" v-else>
         <div class="h-full overflow-y-scroll">
-          <div class="p-4 max-w mx-auto bg-white">
-            <div class="text-xl font-semibold mb-2">Error Details</div>
-            <div class="space-y-3">
-              <div v-if="validateErrors[selectedErrorIndex].keyword" class="text-sm text-gray-600">
-                <strong>Keyword:</strong>
-                {{ validateErrors[selectedErrorIndex].keyword }}
-              </div>
-              <div v-if="validateErrors[selectedErrorIndex].instancePath" class="text-sm text-gray-600">
-                <strong>Instance Path:</strong>
-                {{ validateErrors[selectedErrorIndex].instancePath }}
-              </div>
-              <div v-if="validateErrors[selectedErrorIndex].schemaPath" class="text-sm text-gray-600">
-                <strong>Schema Path:</strong>
-                {{ validateErrors[selectedErrorIndex].schemaPath }}
-              </div>
-              <div v-if="validateErrors[selectedErrorIndex].params" class="text-sm text-gray-600">
-                <strong>Params:</strong>
-                {{ validateErrors[selectedErrorIndex].params }}
-              </div>
-              <div v-if="validateErrors[selectedErrorIndex].propertyName" class="text-sm text-gray-600">
-                <strong>Property Name:</strong>
-                {{ validateErrors[selectedErrorIndex].propertyName }}
-              </div>
-              <div v-if="validateErrors[selectedErrorIndex].message" class="text-sm text-gray-600">
-                <strong>Message:</strong>
-                {{ validateErrors[selectedErrorIndex].message }}
-              </div>
-            </div>
-          </div>
+          <ErrorCard :validateError="validateErrors[selectedErrorIndex]" />
           <Separator />
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead class="w-[100px]"> Index </TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead>Path</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow @click="selectedErrorIndex = index" v-for="(error, index) in validateErrors" :key="index">
-                <TableCell class="font-medium">
-                  {{ index + 1 }}
-                </TableCell>
-                <TableCell class="font-medium">
-                  {{ error.message }}
-                </TableCell>
-                <TableCell>
-                  {{ error.keyword }}
-                </TableCell>
-                <TableCell>
-                  {{ error.schemaPath }}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <ErrorTable
+            :validateErrors="validateErrors"
+            @selectedErrorIndex="selectedErrorIndex = $event"
+          />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
