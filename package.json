@@ -22,7 +22,6 @@
     "clsx": "^2.1.1",
     "radix-vue": "^1.8.3",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
     "vda-5050-lib": "^1.4.0",
     "vee-validate": "^4.13.1",
     "vue": "^3.4.21",

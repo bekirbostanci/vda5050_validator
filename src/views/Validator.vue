@@ -7,7 +7,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-
+import Separator from '@/components/ui/separator/Separator.vue';
 import {toast} from '@/components/ui/toast';
 import {Textarea} from '@/components/ui/textarea';
 import {Button} from '@/components/ui/button';
@@ -19,11 +19,10 @@ import vdaSchemas from '../vda-schemas/index';
 
 // 3rd Party
 import VueJsonPretty from 'vue-json-pretty';
-import 'vue-json-pretty/lib/styles.css';
-import addFormats from 'ajv-formats'; // Import ajv-formats for format validation
+import addFormats from 'ajv-formats';
 import Ajv2020, {ErrorObject} from 'ajv/dist/2020';
 import {Icon} from '@iconify/vue';
-import Separator from '@/components/ui/separator/Separator.vue';
+import 'vue-json-pretty/lib/styles.css';
 
 enum vdaTopicsEnum {
   AUTO = 'auto',
